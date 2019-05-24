@@ -8,6 +8,7 @@ export default class FloorPlan extends THREE.Object3D {
     this.trimesh = null;
     this.heightfield = null;
     this.heightfieldMesh = null;
+    this.voxels = null;
   }
 
   setNavMesh(object) {
@@ -42,10 +43,16 @@ export default class FloorPlan extends THREE.Object3D {
     this.heightfield = heightfield || null;
   }
 
+  setVoxels(voxels) {
+    this.voxels = voxels || null;
+  }
+
   copy(source, recursive) {
     super.copy(source, false);
 
     this.heightfield = JSON.parse(JSON.stringify(source.heightfield));
+
+    this.voxels = JSON.parse(JSON.stringify(source.voxels));
 
     for (const child of source.children) {
       let clonedChild;

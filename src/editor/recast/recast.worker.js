@@ -80,6 +80,10 @@ self.onmessage = async event => {
       return;
     }
 
+    const wasmHeightfieldVoxels = recast.getHeightfieldVoxels();
+    const voxels = new Float32Array(wasmHeightfieldVoxels.length);
+    voxels.set(wasmHeightfieldVoxels);
+
     const meshes = recast.getMeshes();
     const wasmVerts = recast.getVerts();
     const verts = new Float32Array(wasmVerts.length);
@@ -112,9 +116,10 @@ self.onmessage = async event => {
     self.postMessage(
       {
         indices,
-        verts
+        verts,
+        voxels
       },
-      [indices.buffer, verts.buffer]
+      [indices.buffer, verts.buffer, voxels.buffer]
     );
 
     recast.freeNavMesh();

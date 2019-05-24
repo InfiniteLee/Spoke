@@ -98,6 +98,8 @@ export default class RecastClient {
     navmesh.addAttribute("position", new THREE.Float32BufferAttribute(result.verts, 3));
     navmesh.setIndex(new THREE.Uint16BufferAttribute(result.indices, 1));
 
-    return navmesh;
+    const voxels = Array.from(result.voxels);
+
+    return { navmesh: navmesh, voxels: voxels };
   }
 }

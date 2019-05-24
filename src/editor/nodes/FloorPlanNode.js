@@ -159,7 +159,7 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
     // Tuned to produce cell sizes from ~0.5 to ~1.5 for areas from ~200 to ~350,000.
     const cellSize = this.autoCellSize ? Math.pow(area, 1 / 3) / 50 : this.cellSize;
 
-    const navGeometry = await recastClient.buildNavMesh(
+    const { navmesh: navGeometry, voxels } = await recastClient.buildNavMesh(
       walkableGeometry,
       {
         cellSize,
@@ -179,6 +179,8 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
     );
 
     this.setNavMesh(navMesh);
+
+    this.setVoxels({ data: voxels });
 
     if (this.editor.selected === this) {
       navMesh.visible = true;
@@ -310,6 +312,15 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
         visible: { visible: false }
       }
     };
+
+    const voxels = new THREE.Object3D();
+    voxels.name = "voxels";
+    voxels.userData.gltfExtensions = {
+      MOZ_hubs_components: {
+        voxels: this.voxels
+      }
+    };
+    this.add(voxels);
 
     if (this.trimesh) {
       this.trimesh.name = "trimesh";
