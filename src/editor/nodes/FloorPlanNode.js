@@ -159,7 +159,7 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
     // Tuned to produce cell sizes from ~0.5 to ~1.5 for areas from ~200 to ~350,000.
     const cellSize = this.autoCellSize ? Math.pow(area, 1 / 3) / 50 : this.cellSize;
 
-    const { navmesh: navGeometry, voxels } = await recastClient.buildNavMesh(
+    const { navmesh: navGeometry } = await recastClient.buildNavMesh(
       walkableGeometry,
       {
         cellSize,
@@ -180,13 +180,30 @@ export default class FloorPlanNode extends EditorNodeMixin(FloorPlan) {
 
     this.setNavMesh(navMesh);
 
-    this.setVoxels({ data: voxels });
-
     if (this.editor.selected === this) {
       navMesh.visible = true;
     }
 
     const collidableGeometry = mergeMeshGeometries(collidableMeshes);
+
+    const voxelGeometry = mergeMeshGeometries(collidableMeshes);
+    const { voxels } = await recastClient.buildNavMesh(
+      voxelGeometry,
+      {
+        cellSize,
+        cellHeight: this.cellHeight,
+        agentHeight: this.agentHeight,
+        agentRadius: this.agentRadius,
+        agentMaxClimb: this.agentMaxClimb,
+        agentMaxSlope: this.agentMaxSlope,
+        regionMinSize: this.regionMinSize
+      },
+      signal
+    );
+
+    this.setVoxels({ data: voxels });
+
+    return this;
 
     let heightfield = null;
     if (!this.forceTrimesh) {
