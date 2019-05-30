@@ -50,9 +50,9 @@ export default class FloorPlan extends THREE.Object3D {
   copy(source, recursive) {
     super.copy(source, false);
 
-    this.heightfield = JSON.parse(JSON.stringify(source.heightfield));
-
-    this.voxels = JSON.parse(JSON.stringify(source.voxels));
+    //NOTE: copy of object will have a reference to the original heightfield and voxels
+    this.heightfield = source.heightfield;
+    this.voxels = source.voxels;
 
     for (const child of source.children) {
       let clonedChild;
